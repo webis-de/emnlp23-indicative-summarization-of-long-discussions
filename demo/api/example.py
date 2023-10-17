@@ -1,3 +1,4 @@
+# this file demonstrates how to use the pipeline for clustering, cluster labeling and frame assignment
 import os
 
 os.environ["CLIENT_ID"] = "<your-client-id>"
@@ -8,8 +9,6 @@ OPENAI_API_KEY = (
 URL = "https://www.reddit.com/ynqtgx"
 
 from pipeline import Pipeline
-
-OPENAI_API_KEY = None
 
 if OPENAI_API_KEY:
     model = "gpt-3.5-turbo"
