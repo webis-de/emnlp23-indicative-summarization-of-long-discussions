@@ -1,0 +1,25 @@
+version: '3'
+
+services:
+  api:
+    image: api:latest
+    build:
+      context: ./src/api/
+    volumes:
+      - ./data/:/data
+    environment:
+      - CORS=${CORS}
+      - USERS=${USERS}
+      - PORT=5001
+
+  frontend:
+    image: frontend:latest
+    build:
+      context: ./src/frontend/
+
+  proxy:
+    image: proxy:latest
+    build:
+      context: ./src/proxy/
+    ports:
+      - 5001:80
