@@ -1,0 +1,26 @@
+apiVersion: networking.k8s.io/v1
+
+kind: Ingress
+
+metadata:
+  name: frame-explorer-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/client-max-body-size: 512m
+    nginx.ingress.kubernetes.io/proxy-connect-timeout: "3000"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "3000"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "3000"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+
+spec:
+  ingressClassName: nginx-external
+  rules:
+    - host: discussion-explorer.web.webis.de
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: frame-explorer
+                port:
+                  number: 80

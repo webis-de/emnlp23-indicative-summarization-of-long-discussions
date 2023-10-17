@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+
+kind: Deployment
+
+metadata:
+  name: frame-explorer-mongodb
+  labels:
+    app: frame-explorer
+    tier: mongodb
+
+spec:
+  selector:
+    matchLabels:
+      app: frame-explorer
+      tier: mongodb
+  template:
+    metadata:
+      labels:
+        app: frame-explorer
+        tier: mongodb
+    spec:
+      volumes:
+        - name: mongodata
+          persistentVolumeClaim:
+            claimName: frame-explorer-mongodb-data
+      containers:
+        - name: mongodb
+          image: mongo:latest
+          ports:
+            - name: mongodb-port
+              containerPort: 27017
+              protocol: TCP
+          volumeMounts:
+            - mountPath: /data/db
+              name: mongodata
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 27017
+            periodSeconds: 15
+      restartPolicy: Always
+---
+apiVersion: v1
+
+kind: Service
+
+metadata:
+  name: frame-explorer-mongodb
+
+spec:
+  selector:
+    app: frame-explorer
+    tier: mongodb
+  ports:
+    - port: 27017
+      targetPort: mongodb-port

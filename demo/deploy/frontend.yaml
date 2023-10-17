@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+
+kind: Deployment
+
+metadata:
+  name: frame-explorer-frontend
+  labels:
+    app: frame-explorer
+    tier: frontend
+
+spec:
+  selector:
+    matchLabels:
+      app: frame-explorer
+      tier: frontend
+  template:
+    metadata:
+      labels:
+        app: frame-explorer
+        tier: frontend
+    spec:
+      containers:
+        - name: frontend
+          image: docker.io/ds40bamo/frame-explorer-frontend:1.0.0
+          imagePullPolicy: Always
+          env: []
+          ports:
+            - name: frontend-port
+              containerPort: 80
+              protocol: TCP
+          readinessProbe:
+            httpGet:
+              path: /
+              port: frontend-port
+            periodSeconds: 15
+      restartPolicy: Always
+---
+apiVersion: v1
+
+kind: Service
+
+metadata:
+  name: frame-explorer-frontend
+
+spec:
+  selector:
+    app: frame-explorer
+    tier: frontend
+  ports:
+    - port: 80
+      targetPort: frontend-port

@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+
+kind: Deployment
+
+metadata:
+  name: frame-explorer-api
+  labels:
+    app: frame-explorer
+    tier: api
+
+spec:
+  selector:
+    matchLabels:
+      app: frame-explorer
+      tier: api
+  template:
+    metadata:
+      labels:
+        app: frame-explorer
+        tier: api
+    spec:
+      containers:
+        - name: api
+          image: docker.io/ds40bamo/frame-explorer-api:1.0.0
+          imagePullPolicy: Always
+          env:
+            - name: MONGODB_URL
+              value: mongodb://frame-explorer-mongodb:27017
+          envFrom:
+            - configMapRef:
+                name: frame-explorer-api-config # create this config via: kubectl create configmap frame-explorer-api-config --from-env-file=./.env
+          ports:
+            - name: api-port
+              containerPort: 5000
+              protocol: TCP
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: api-port
+            periodSeconds: 15
+            timeoutSeconds: 5
+      restartPolicy: Always
+---
+apiVersion: v1
+
+kind: Service
+
+metadata:
+  name: frame-explorer-api
+
+spec:
+  selector:
+    app: frame-explorer
+    tier: api
+  ports:
+    - port: 5000
+      targetPort: api-port
