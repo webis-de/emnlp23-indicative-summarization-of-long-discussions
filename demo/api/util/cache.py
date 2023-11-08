@@ -8,9 +8,8 @@ class CacheDict(OrderedDict):
         super().__init__(*args, **kwargs)
 
     def _clean(self):
-        iterator = iter(self)
         while len(self) > self.cache_len:
-            super().__delitem__(next(iterator))
+            super().__delitem__(next(iter(self)))
 
     def _add(self, key, value):
         super().__setitem__(key, value)
